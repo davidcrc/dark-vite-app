@@ -13,3 +13,9 @@ npm i -D tailwindcss postcss autoprefixer
 ```bash
 npx tailwindcss init -p
 ```
+
+# Zustand
+
+```bash
+npm install zustand
+```
