@@ -1,21 +1,33 @@
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
 import "./App.css";
-import { useEffect, useState } from "react";
+import { useThemeStore } from "./stores/theme";
+import { useEffect } from "react";
 
 function App() {
-  // const [theme, setTheme] = useState("light");
-  const [theme, setTheme] = useState(() => {
-    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      return "dark";
-    }
+  const theme = useThemeStore((state) => state.theme);
+  const customTheme = useThemeStore((state) => state.custom);
+  const switchTheme = useThemeStore((state) => state.switchTheme);
+  const setCustomTheme = useThemeStore((state) => state.setCustomTheme);
 
-    return "light";
-  });
-
-  const handleChangeTheme = () => {
-    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+  const handleChangeDarkTheme = () => {
+    setCustomTheme("dark");
   };
+
+  const handleChangeLightTheme = () => {
+    setCustomTheme("light");
+  };
+
+  const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
+
+  function handleThemeChange() {
+    const preferredTheme = prefersDarkScheme.matches ? "dark" : "light";
+    switchTheme(preferredTheme);
+  }
+
+  if (!customTheme) {
+    prefersDarkScheme.addEventListener("change", handleThemeChange);
+  }
 
   useEffect(() => {
     if (theme === "dark") {
@@ -24,14 +36,6 @@ function App() {
       document.querySelector("html")?.classList.remove("dark");
     }
   }, [theme]);
-
-  // useEffect(() => {
-  //   window
-  //     .matchMedia("(prefers-color-scheme: dark)")
-  //     .addEventListener("change", (e) => {
-  //       setTheme(e.matches ? "dark" : "light");
-  //     });
-  // }, []);
 
   return (
     <div className="flex flex-col justify-center h-screen w-full dark:bg-slate-600">
@@ -49,12 +53,20 @@ function App() {
           <p>
             Edit <code>src/App.tsx</code> and save to test HMR
           </p>
-          <button
-            onClick={handleChangeTheme}
-            className="bg-slate-200 px-4 py-2 rounded hover:bg-slate-300 dark:bg-white"
-          >
-            Change theme
-          </button>
+          <div className="flex flex-col gap-4">
+            <button
+              onClick={handleChangeDarkTheme}
+              className="bg-slate-200 px-4 py-2 rounded hover:bg-slate-300 dark:bg-white"
+            >
+              Set to Dark theme
+            </button>
+            <button
+              onClick={handleChangeLightTheme}
+              className="bg-slate-200 px-4 py-2 rounded hover:bg-slate-300 dark:bg-white"
+            >
+              Set to Light theme
+            </button>
+          </div>
         </div>
         <p className="read-the-docs">
           Click on the Vite and React logos to learn more

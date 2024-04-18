@@ -7,7 +7,8 @@ type ThemeType = "light" | "dark";
 interface MyState {
   custom: boolean;
   theme: ThemeType;
-  setCustomTheme: (theme: ThemeType) => void;
+  switchTheme: (theme: ThemeType) => void;
+  setCustomTheme: (customTheme: ThemeType) => void;
 }
 
 export const useThemeStore = create<MyState>()(
@@ -15,8 +16,14 @@ export const useThemeStore = create<MyState>()(
     (set, _get) => ({
       custom: false,
       theme: "light",
-      setCustomTheme: (theme: ThemeType) => {
-        set({ custom: true, theme });
+      switchTheme: (theme) => {
+        set(() => ({ theme }));
+      },
+      setCustomTheme: (customTheme: ThemeType) => {
+        set({
+          custom: true,
+          theme: customTheme,
+        });
       },
     }),
     {
